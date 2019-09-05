@@ -9,6 +9,7 @@ public class Controller : MonoBehaviour
 	public GameObject NewHumanWithHat;
 	private List<PlayerAction> PlayerActions;
 	private readonly Func<PlayerAction, bool> VerifyInput = (p) => { return Input.GetKey(p.AssignedKey); };
+	LayerMask FloorMask;
 
     // Start is called before the first frame update
     void Start()
@@ -18,6 +19,7 @@ public class Controller : MonoBehaviour
 			new PlayerAction("MoveForward", KeyCode.UpArrow, MovingUp),
 			new PlayerAction("MouseClick", KeyCode.Mouse0, MouseClick)
 		};
+		FloorMask = LayerMask.GetMask("Floor");
 	}
 
     // Update is called once per frame
@@ -36,15 +38,17 @@ public class Controller : MonoBehaviour
 		{
 			inputtedPlayerAction.Action();
 		}
-		Ray mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-		if (Physics.Raycast(mouseRay))
-		{
-			Debug.Log("Mouse hit something!");
-		}
 	}
 
 	void MovingUp() { Debug.Log("Moving up!"); }
-	void MouseClick() { Debug.Log("Click!"); }
+	void MouseClick()
+	{
+		Ray mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+		if (Physics.Raycast(mouseRay, out RaycastHit mouseHit, Mathf.Infinity, FloorMask))
+		{
+			Debug.Log($"Mouse hit {mouseHit.transform.name} with layer {mouseHit.transform.gameObject.layer}");
+		}
+	}
 }
 
 public class PlayerAction
