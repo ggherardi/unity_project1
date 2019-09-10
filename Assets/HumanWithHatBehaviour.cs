@@ -12,6 +12,7 @@ public class HumanWithHatBehaviour : MonoBehaviour
     Ray Ray;
     private List<PlayerAction> PlayerActions;
     private readonly Func<PlayerAction, bool> VerifyInput = (p) => { return Input.GetKey(p.AssignedKey); };
+    int PlayerSpeed = 10;
     LayerMask FloorMask;
 
     // Start is called before the first frame update
@@ -22,7 +23,12 @@ public class HumanWithHatBehaviour : MonoBehaviour
 		Enemy = GameObject.FindWithTag("Enemy");
         PlayerActions = new List<PlayerAction>()
         {
-            new PlayerAction("MoveForward", KeyCode.UpArrow, MovingUp),
+            new PlayerAction("MoveForward", KeyCode.W, MovingUp),
+            new PlayerAction("MoveLeft", KeyCode.A, MovingLeft),
+            new PlayerAction("MoveRight", KeyCode.D, MovingRight),
+            new PlayerAction("MoveDown", KeyCode.S, MovingDown),
+            new PlayerAction("RotateRight", KeyCode.Q, RotateRight),
+            new PlayerAction("RotateLeft", KeyCode.E, RotateLeft),
             new PlayerAction("MouseClick", KeyCode.Mouse0, MouseClick)
         };
         FloorMask = LayerMask.GetMask("Floor");
@@ -71,9 +77,28 @@ public class HumanWithHatBehaviour : MonoBehaviour
 
     public void MovingUp()
     {
-        int speed = 10;
-        RigidbodyComponent.AddForce(Vector3.forward * speed, ForceMode.Force);
-        Debug.Log("Moving up!");
+        RigidbodyComponent.AddForce(Vector3.forward * PlayerSpeed, ForceMode.Force);
+    }
+    public void MovingDown()
+    {
+        RigidbodyComponent.AddForce(-Vector3.forward * PlayerSpeed, ForceMode.Force);
+    }
+    public void MovingLeft()
+    {
+        RigidbodyComponent.AddForce(Vector3.left * PlayerSpeed, ForceMode.Force);
+    }
+    public void MovingRight()
+    {
+        RigidbodyComponent.AddForce(Vector3.right * PlayerSpeed, ForceMode.Force);        
+    }
+    public void RotateRight()
+    {
+        float turn = Input.GetAxis("Horizontal");
+        RigidbodyComponent.AddTorque(Vector3.right * PlayerSpeed);
+    }
+    public void RotateLeft()
+    {
+
     }
     public void MouseClick()
     {
